@@ -1,0 +1,23 @@
+.root {
+  display: flex;
+  gap: 5px;
+}
+
+.btn {
+  flex: 1;
+  padding: 4px 6px;
+  font-size: 10px;
+  font-family: var(--font-sans);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+
+.btn.on {
+  background: var(--bg-3);
+  border-color: var(--accent);
+  color: var(--accent);
+}

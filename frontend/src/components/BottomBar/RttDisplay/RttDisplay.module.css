@@ -1,0 +1,9 @@
+.root {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+.val  { color: var(--ink-2); }
+.warn { color: var(--warn); }
+.budget { color: var(--ink-4); }

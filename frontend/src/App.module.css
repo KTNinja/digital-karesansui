@@ -1,0 +1,12 @@
+.root {
+  display: grid;
+  grid-template-rows: 50px 1fr 38px;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--bg-0);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}

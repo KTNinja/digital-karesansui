@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Karesansui — Phase 2 Layout Mockup</title>
+<style>
+  :root {
+    --bg-0:     #0e0d0c;
+    --bg-1:     #181614;
+    --bg-2:     #222018;
+    --bg-3:     #2e2b24;
+    --border:   #3a3730;
+    --border-2: #4d4a42;
+
+    --sand-h:   #d2c0a0;
+    --sand:     #c4ae8c;
+    --sand-s:   #b09878;
+    --sand-d:   #917c5e;
+
+    --stone-h:  #a09488;
+    --stone:    #706460;
+    --stone-d:  #4a4240;
+
+    --moss:     #4a5c3e;
+
+    --ink:      #f0ece4;
+    --ink-2:    #ada89e;
+    --ink-3:    #72706a;
+    --ink-4:    #4e4c48;
+
+    --accent:   #c49460;
+    --accent-d: #9a7040;
+    --cool:     #6a8a94;
+
+    --live:     #68a868;
+    --warn:     #c49a4a;
+
+    --r-sm: 4px;
+    --r-md: 8px;
+    --r-lg: 12px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%; width: 100%;
+    overflow: hidden;
+    background: var(--bg-0);
+    color: var(--ink);
+    font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', system-ui, sans-serif;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─────────── LAYOUT GRID ─────────── */
+  .app {
+    display: grid;
+    grid-template-rows: 50px 1fr 38px;
+    grid-template-columns: 1fr;
+    height: 100vh;
+    width: 100vw;
+  }
+  .middle {
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ─────────── TOP BAR ─────────── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 10px;
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    z-index: 10;
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 14px; font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+  .logo-stone {
+    width: 26px; height: 26px; flex-shrink: 0;
+    background: radial-gradient(ellipse at 38% 32%, var(--stone-h), var(--stone-d));
+    border-radius: 48% 40% 52% 44% / 50% 48% 52% 50%;
+    box-shadow: inset -2px -2px 5px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.5);
+  }
+  .logo-jp  { color: var(--accent); font-size: 16px; letter-spacing: 0.04em; }
+  .logo-sub { color: var(--ink-3); font-weight: 400; font-size: 11px; }
+
+  .sep { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
+  .spacer { flex: 1; }
+
+  .room-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: var(--r-sm); padding: 4px 11px;
+    font-size: 12px; color: var(--ink-3);
+  }
+  .room-chip strong { color: var(--ink); font-weight: 500; }
+
+  .mode-row { display: flex; gap: 4px; }
+  .mode-btn {
+    padding: 4px 9px;
+    font-size: 11px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-2); color: var(--ink-3);
+    cursor: pointer;
+    transition: border-color .12s, color .12s, background .12s;
+  }
+  .mode-btn.on {
+    background: var(--bg-3); border-color: var(--accent); color: var(--accent);
+  }
+
+  .avatars { display: flex; align-items: center; }
+  .avatar {
+    width: 27px; height: 27px; border-radius: 50%;
+    border: 2px solid var(--bg-1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; color: #0e0d0c;
+    margin-left: -7px;
+  }
+  .avatar:first-child { margin-left: 0; }
+  .av-a { background: #8fbc8f; }
+  .av-b { background: #7cb8cc; }
+  .av-c { background: #c4956a; }
+  .av-count { font-size: 11px; color: var(--ink-3); margin-left: 7px; }
+
+  .ping {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 3px 11px;
+    font-size: 11px; font-variant-numeric: tabular-nums;
+    color: var(--live);
+  }
+  .ping-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--live);
+    animation: blink 2.2s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+  /* ─────────── TOOLBARS ─────────── */
+  .toolbar {
+    width: 176px; flex-shrink: 0;
+    background: var(--bg-1);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .toolbar-l { border-right: 1px solid var(--border); }
+  .toolbar-r { border-left:  1px solid var(--border); }
+
+  .tsec {
+    padding: 13px 12px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .tsec:last-child { border-bottom: none; }
+
+  .tlabel {
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 10px;
+  }
+
+  .tgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+  .titem {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px;
+    padding: 10px 6px 8px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: var(--r-md); cursor: pointer;
+    transition: border-color .12s, background .12s;
+    text-align: center;
+  }
+  .titem:hover { background: var(--bg-3); border-color: var(--border-2); }
+  .titem.on {
+    background: color-mix(in srgb, var(--accent) 8%, var(--bg-2));
+    border-color: var(--accent);
+  }
+  .titem.on .tname { color: var(--accent); }
+  .tname { font-size: 10px; color: var(--ink-3); line-height: 1.25; }
+
+  /* Rock shapes */
+  .ri { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; }
+  .r-smooth {
+    width: 30px; height: 22px;
+    background: radial-gradient(ellipse at 36% 32%, var(--stone-h), var(--stone-d));
+    border-radius: 50%;
+    box-shadow: inset -3px -3px 6px rgba(0,0,0,0.45), 0 3px 8px rgba(0,0,0,0.55);
+  }
+  .r-angular {
+    width: 28px; height: 22px;
+    background: linear-gradient(130deg, var(--stone-h) 20%, var(--stone-d) 100%);
+    clip-path: polygon(14% 0%, 86% 4%, 100% 62%, 78% 100%, 8% 96%, 0% 40%);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.55);
+  }
+  .r-flat {
+    width: 34px; height: 11px;
+    background: linear-gradient(175deg, var(--stone-h) 0%, var(--stone-d) 100%);
+    border-radius: 45% 52% 48% 42% / 55% 55% 45% 45%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.55);
+  }
+  .r-tall {
+    width: 18px; height: 30px;
+    background: radial-gradient(ellipse at 40% 28%, var(--stone-h), var(--stone-d));
+    border-radius: 38% 48% 40% 44% / 52% 52% 48% 48%;
+    box-shadow: inset -2px -3px 5px rgba(0,0,0,0.4), 0 3px 8px rgba(0,0,0,0.55);
+  }
+
+  /* Size picker */
+  .size-row { display: flex; gap: 6px; align-items: center; justify-content: center; }
+  .sbtn {
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--r-sm); background: var(--bg-2);
+    border: 1px solid var(--border); color: var(--ink-3);
+    cursor: pointer; font-size: 10px; font-weight: 700; letter-spacing: .04em;
+  }
+  .sbtn.s { width: 27px; height: 27px; }
+  .sbtn.m { width: 32px; height: 32px; font-size: 11px; }
+  .sbtn.l { width: 37px; height: 37px; font-size: 12px; }
+  .sbtn.on { background: var(--bg-3); border-color: var(--accent); color: var(--accent); }
+
+  /* Rotation dial */
+  .dial-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .dial-val { font-size: 10px; color: var(--ink-3); }
+  .dial-val span { color: var(--accent); }
+
+  /* Counter badge */
+  .counter { text-align: center; padding: 4px; }
+  .counter-n { font-size: 22px; font-weight: 200; color: var(--ink-2); display: block; margin-bottom: 2px; }
+  .counter-l { font-size: 10px; color: var(--ink-3); }
+
+  /* Rake icons */
+  .rki { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; }
+
+  /* Weight selector */
+  .wrow { display: flex; gap: 7px; align-items: center; justify-content: center; }
+  .wbtn {
+    width: 36px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--r-sm); background: var(--bg-2);
+    border: 1px solid var(--border); cursor: pointer;
+  }
+  .wbtn.on { background: var(--bg-3); border-color: var(--accent); }
+  .wline { border-radius: 2px; background: var(--ink-3); width: 20px; }
+  .wbtn.on .wline { background: var(--accent); }
+
+  /* Slider */
+  .slider-wrap { padding: 4px 0; }
+  .slider-labels {
+    display: flex; justify-content: space-between; margin-bottom: 8px;
+  }
+  .slider-labels span { font-size: 10px; color: var(--ink-3); }
+  .slider-labels .val { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .slider-track {
+    position: relative; height: 4px;
+    background: var(--bg-3); border-radius: 2px;
+  }
+  .slider-fill {
+    position: absolute; left: 0; height: 100%;
+    width: 42%; background: var(--accent); border-radius: 2px;
+  }
+  .slider-thumb {
+    position: absolute; left: 40%; top: -5px;
+    width: 14px; height: 14px; background: var(--accent);
+    border-radius: 50%; cursor: ew-resize;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    border: 2px solid var(--bg-1);
+  }
+
+  /* Angle lock */
+  .angle-row { display: flex; gap: 5px; }
+
+  /* ─────────── GARDEN CANVAS ─────────── */
+  .canvas-wrap {
+    flex: 1;
+    background: var(--bg-0);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+
+  .garden {
+    position: relative;
+    width: calc(100% - 28px);
+    height: calc(100% - 28px);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow:
+      0 0 0 1px var(--bg-0),
+      0 0 0 2px var(--border),
+      0 12px 48px rgba(0,0,0,0.7),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  /* Sand base */
+  .sand-base {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 55% 45% at 22% 28%, rgba(220,200,170,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 78% 68%, rgba(160,130,95,0.12) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 35% at 50% 90%, rgba(120,96,66,0.10) 0%, transparent 50%),
+      linear-gradient(162deg,
+        #cfc0a0 0%, #c8b898 18%, #c0b090 35%,
+        #bfad8e 52%, #c2b290 68%, #b8a680 85%, #b09475 100%);
+  }
+
+  /* Grain texture */
+  .sand-base::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.2) 0.5px, transparent 0.5px),
+      radial-gradient(circle, rgba(0,0,0,0.09) 0.8px, transparent 0.8px);
+    background-size: 3.5px 3.5px, 6px 6px;
+    background-position: 0 0, 1.5px 1.5px;
+    opacity: 0.55;
+  }
+
+  /* Subtle grid overlay */
+  .sand-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(100,82,58,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(100,82,58,0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .garden-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+
+  /* Corner label */
+  .garden-label {
+    position: absolute; bottom: 10px; right: 12px;
+    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    color: rgba(80,66,46,0.65); pointer-events: none; user-select: none;
+    font-weight: 500;
+  }
+
+  /* ─────────── BOTTOM BAR ─────────── */
+  .bot-bar {
+    display: flex; align-items: center;
+    padding: 0 16px; gap: 14px;
+    background: var(--bg-1);
+    border-top: 1px solid var(--border);
+  }
+
+  .live-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--live); flex-shrink: 0;
+    animation: blink 2.5s ease-in-out infinite;
+  }
+  .bot-text { font-size: 11px; color: var(--ink-3); }
+  .bot-text strong { color: var(--live); }
+
+  .rtt {
+    font-size: 11px; font-variant-numeric: tabular-nums;
+    color: var(--ink-3);
+  }
+  .rtt .v { color: var(--ink-2); }
+  .rtt .budget { color: var(--ink-4); }
+
+  .bot-spacer { flex: 1; }
+
+  .bact { display: flex; gap: 5px; }
+  .bbtn {
+    padding: 4px 10px;
+    font-size: 11px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: var(--r-sm); color: var(--ink-3); cursor: pointer;
+    transition: border-color .12s, color .12s;
+  }
+  .bbtn:hover { border-color: var(--border-2); color: var(--ink-2); }
+  .bbtn.danger:hover { border-color: #8a4444; color: #c47070; }
+  .kbd {
+    display: inline-block; font-size: 9px;
+    background: var(--bg-3); border: 1px solid var(--border);
+    border-radius: 3px; padding: 1px 4px; color: var(--ink-4);
+    vertical-align: middle; margin-left: 3px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════ TOP BAR ══════════════════ -->
+  <header class="top-bar">
+
+    <div class="logo">
+      <div class="logo-stone"></div>
+      <span class="logo-jp">枯山水</span>
+      <span class="logo-sub">Digital Karesansui</span>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="room-chip">Room:&nbsp;<strong>zen-garden-42</strong></div>
+
+    <div class="mode-row">
+      <div class="mode-btn">Place Rock</div>
+      <div class="mode-btn on">Rake</div>
+      <div class="mode-btn">Erase</div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="avatars">
+      <div class="avatar av-a">KT</div>
+      <div class="avatar av-b">SB</div>
+      <div class="avatar av-c">YM</div>
+    </div>
+    <span class="av-count">3 active</span>
+
+    <div class="sep"></div>
+
+    <div class="ping">
+      <div class="ping-dot"></div>
+      24 ms
+    </div>
+
+  </header>
+
+  <!-- ══════════════════ MIDDLE ══════════════════ -->
+  <div class="middle">
+
+    <!-- ──────── ROCK TOOLBAR (LEFT) ──────── -->
+    <aside class="toolbar toolbar-l">
+
+      <div class="tsec">
+        <div class="tlabel">Rock Type</div>
+        <div class="tgrid">
+
+          <div class="titem on">
+            <div class="ri"><div class="r-smooth"></div></div>
+            <div class="tname">River Stone</div>
+          </div>
+
+          <div class="titem">
+            <div class="ri"><div class="r-angular"></div></div>
+            <div class="tname">Boulder</div>
+          </div>
+
+          <div class="titem">
+            <div class="ri"><div class="r-flat"></div></div>
+            <div class="tname">Flat Slab</div>
+          </div>
+
+          <div class="titem">
+            <div class="ri"><div class="r-tall"></div></div>
+            <div class="tname">Standing Stone</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="tsec">
+        <div class="tlabel">Size</div>
+        <div class="size-row">
+          <div class="sbtn s">S</div>
+          <div class="sbtn m on">M</div>
+          <div class="sbtn l">L</div>
+        </div>
+      </div>
+
+      <div class="tsec">
+        <div class="tlabel">Rotation</div>
+        <div class="dial-wrap">
+          <svg width="58" height="58" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Track -->
+            <circle cx="29" cy="29" r="23" stroke="#3a3730" stroke-width="1.5" fill="none"/>
+            <!-- Tick marks -->
+            <g stroke="#3a3730" stroke-width="1" stroke-linecap="round">
+              <line x1="29" y1="6"  x2="29" y2="11" transform="rotate(0   29 29)"/>
+              <line x1="29" y1="6"  x2="29" y2="10" transform="rotate(45  29 29)"/>
+              <line x1="29" y1="6"  x2="29" y2="11" transform="rotate(90  29 29)"/>
+              <line x1="29" y1="6"  x2="29" y2="10" transform="rotate(135 29 29)"/>
+              <line x1="29" y1="6"  x2="29" y2="11" transform="rotate(180 29 29)"/>
+              <line x1="29" y1="6"  x2="29" y2="10" transform="rotate(225 29 29)"/>
+              <line x1="29" y1="6"  x2="29" y2="11" transform="rotate(270 29 29)"/>
+              <line x1="29" y1="6"  x2="29" y2="10" transform="rotate(315 29 29)"/>
+            </g>
+            <!-- Needle -->
+            <line x1="29" y1="29" x2="29" y2="8" stroke="#c49460" stroke-width="2" stroke-linecap="round"/>
+            <!-- Center -->
+            <circle cx="29" cy="29" r="3.5" fill="#c49460"/>
+            <!-- Handle -->
+            <circle cx="29" cy="8" r="3.5" fill="#c49460" stroke="#181614" stroke-width="1.5"/>
+          </svg>
+          <div class="dial-val"><span>0°</span></div>
+        </div>
+      </div>
+
+      <div class="tsec" style="margin-top:auto; border-bottom:none;">
+        <div class="tlabel">Placed</div>
+        <div class="counter">
+          <span class="counter-n">7</span>
+          <span class="counter-l">rocks in garden</span>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ──────── GARDEN CANVAS ──────── -->
+    <main class="canvas-wrap">
+      <div class="garden">
+
+        <div class="sand-base"></div>
+        <div class="sand-grid"></div>
+
+        <svg class="garden-svg" viewBox="0 0 860 580" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="drop" x="-40%" y="-40%" width="180%" height="180%">
+              <feDropShadow dx="3" dy="7" stdDeviation="7" flood-color="rgba(0,0,0,0.5)"/>
+            </filter>
+            <filter id="drop-sm" x="-40%" y="-40%" width="180%" height="180%">
+              <feDropShadow dx="2" dy="4" stdDeviation="5" flood-color="rgba(0,0,0,0.45)"/>
+            </filter>
+
+            <radialGradient id="rg1" cx="36%" cy="30%" r="64%">
+              <stop offset="0%"   stop-color="#a89c8e"/>
+              <stop offset="55%"  stop-color="#726458"/>
+              <stop offset="100%" stop-color="#4a3e38"/>
+            </radialGradient>
+            <radialGradient id="rg2" cx="40%" cy="34%" r="60%">
+              <stop offset="0%"   stop-color="#9a8e82"/>
+              <stop offset="55%"  stop-color="#675c52"/>
+              <stop offset="100%" stop-color="#46403a"/>
+            </radialGradient>
+            <radialGradient id="rg3" cx="32%" cy="28%" r="68%">
+              <stop offset="0%"   stop-color="#b2a898"/>
+              <stop offset="55%"  stop-color="#827870"/>
+              <stop offset="100%" stop-color="#524e4a"/>
+            </radialGradient>
+            <radialGradient id="rg4" cx="38%" cy="32%" r="62%">
+              <stop offset="0%"   stop-color="#a09488"/>
+              <stop offset="100%" stop-color="#524840"/>
+            </radialGradient>
+          </defs>
+
+          <!-- ═══ RAKE MARKS ═══ -->
+
+          <!-- Straight lines — upper band -->
+          <g stroke="rgba(100,80,55,0.32)" stroke-width="1.3" fill="none" stroke-linecap="round">
+            <path d="M 30  72 Q 220  68 430  74 Q 640  80 830  72"/>
+            <path d="M 30  90 Q 220  86 430  92 Q 640  98 830  90"/>
+            <path d="M 30 108 Q 220 104 430 110 Q 640 116 830 108"/>
+            <path d="M 30 126 Q 220 122 430 128 Q 640 134 830 126"/>
+            <path d="M 30 144 Q 220 140 430 146 Q 640 152 830 144"/>
+          </g>
+
+          <!-- Concentric rings around main rock cluster -->
+          <g stroke="rgba(100,80,55,0.28)" stroke-width="1.3" fill="none" stroke-linecap="round">
+            <ellipse cx="310" cy="310" rx="70"  ry="58"/>
+            <ellipse cx="310" cy="310" rx="92"  ry="76"/>
+            <ellipse cx="310" cy="310" rx="114" ry="94"/>
+            <ellipse cx="310" cy="310" rx="138" ry="114"/>
+            <ellipse cx="310" cy="310" rx="162" ry="134"/>
+            <ellipse cx="310" cy="310" rx="188" ry="155"/>
+          </g>
+
+          <!-- Concentric rings around lone rock (upper left) -->
+          <g stroke="rgba(100,80,55,0.22)" stroke-width="1.1" fill="none">
+            <ellipse cx="120" cy="198" rx="40" ry="33"/>
+            <ellipse cx="120" cy="198" rx="58" ry="48"/>
+            <ellipse cx="120" cy="198" rx="76" ry="62"/>
+          </g>
+
+          <!-- Wave pattern — lower right quadrant -->
+          <g stroke="rgba(100,80,55,0.28)" stroke-width="1.3" fill="none" stroke-linecap="round">
+            <path d="M 510 370 Q 558 348 606 370 Q 654 392 702 370 Q 750 348 830 368"/>
+            <path d="M 510 390 Q 558 368 606 390 Q 654 412 702 390 Q 750 368 830 388"/>
+            <path d="M 510 410 Q 558 388 606 410 Q 654 432 702 410 Q 750 388 830 408"/>
+            <path d="M 510 430 Q 558 408 606 430 Q 654 452 702 430 Q 750 408 830 428"/>
+            <path d="M 510 450 Q 558 428 606 450 Q 654 472 702 450 Q 750 428 830 448"/>
+            <path d="M 510 470 Q 558 448 606 470 Q 654 492 702 470 Q 750 448 830 468"/>
+            <path d="M 510 490 Q 558 468 606 490 Q 654 512 702 490 Q 750 468 830 488"/>
+            <path d="M 510 510 Q 558 488 606 510 Q 654 532 702 510 Q 750 488 830 508"/>
+            <path d="M 510 530 Q 558 508 606 530 Q 654 552 702 530 Q 750 508 830 528"/>
+            <path d="M 510 550 Q 558 528 606 550 Q 654 572 702 550 Q 750 528 830 548"/>
+          </g>
+
+          <!-- Straight ruled lines — right column -->
+          <g stroke="rgba(100,80,55,0.26)" stroke-width="1.2" fill="none" stroke-linecap="round">
+            <line x1="530" y1="165" x2="830" y2="165"/>
+            <line x1="530" y1="182" x2="830" y2="182"/>
+            <line x1="530" y1="199" x2="830" y2="199"/>
+            <line x1="530" y1="216" x2="830" y2="216"/>
+            <line x1="530" y1="233" x2="830" y2="233"/>
+            <line x1="530" y1="250" x2="830" y2="250"/>
+            <line x1="530" y1="267" x2="830" y2="267"/>
+            <line x1="530" y1="284" x2="830" y2="284"/>
+            <line x1="530" y1="301" x2="830" y2="301"/>
+            <line x1="530" y1="318" x2="830" y2="318"/>
+            <line x1="530" y1="335" x2="830" y2="335"/>
+          </g>
+
+          <!-- ═══ ROCKS ═══ -->
+
+          <!-- Main cluster — large smooth -->
+          <ellipse cx="302" cy="302" rx="42" ry="34" fill="url(#rg1)" filter="url(#drop)"/>
+          <!-- Main cluster — medium angular, offset right -->
+          <ellipse cx="340" cy="285" rx="26" ry="32" fill="url(#rg2)" filter="url(#drop)"/>
+          <!-- Main cluster — small flat, left -->
+          <ellipse cx="272" cy="322" rx="22" ry="13" fill="url(#rg3)" filter="url(#drop-sm)"/>
+
+          <!-- Isolated river stone — upper left -->
+          <ellipse cx="120" cy="198" rx="24" ry="20" fill="url(#rg1)" filter="url(#drop-sm)"/>
+
+          <!-- Small stone — mid right -->
+          <ellipse cx="580" cy="295" rx="17" ry="13" fill="url(#rg4)" filter="url(#drop-sm)"/>
+
+          <!-- Standing stone — upper center -->
+          <ellipse cx="430" cy="118" rx="14" ry="22" fill="url(#rg2)" filter="url(#drop-sm)"/>
+
+          <!-- Boulder — far right -->
+          <ellipse cx="720" cy="248" rx="22" ry="28" fill="url(#rg3)" filter="url(#drop-sm)"/>
+
+          <!-- ═══ USER CURSORS ═══ -->
+
+          <!-- User SB -->
+          <g transform="translate(596, 152)">
+            <polygon points="0,0 0,21 5,17 8,26 11,25 8,16 14,16"
+              fill="#7cb8cc" stroke="rgba(255,255,255,0.9)" stroke-width="1.2" stroke-linejoin="round"/>
+            <rect x="15" y="11" width="30" height="16" rx="4" fill="#7cb8cc"/>
+            <text x="30" y="23" text-anchor="middle" font-size="9" fill="#0e0d0c" font-weight="700" font-family="system-ui">SB</text>
+          </g>
+
+          <!-- User YM -->
+          <g transform="translate(194, 448)">
+            <polygon points="0,0 0,21 5,17 8,26 11,25 8,16 14,16"
+              fill="#c4956a" stroke="rgba(255,255,255,0.9)" stroke-width="1.2" stroke-linejoin="round"/>
+            <rect x="15" y="11" width="30" height="16" rx="4" fill="#c4956a"/>
+            <text x="30" y="23" text-anchor="middle" font-size="9" fill="#0e0d0c" font-weight="700" font-family="system-ui">YM</text>
+          </g>
+
+        </svg>
+
+        <div class="garden-label">GardenCanvas · 860 × 580</div>
+      </div>
+    </main>
+
+    <!-- ──────── RAKE TOOLBAR (RIGHT) ──────── -->
+    <aside class="toolbar toolbar-r">
+
+      <div class="tsec">
+        <div class="tlabel">Rake Pattern</div>
+        <div class="tgrid">
+
+          <div class="titem on">
+            <div class="rki">
+              <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                <line x1="4" y1="11" x2="30" y2="11" stroke="#c49460" stroke-width="1.6" stroke-linecap="round"/>
+                <line x1="4" y1="17" x2="30" y2="17" stroke="#c49460" stroke-width="1.6" stroke-linecap="round"/>
+                <line x1="4" y1="23" x2="30" y2="23" stroke="#c49460" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="tname">Straight</div>
+          </div>
+
+          <div class="titem">
+            <div class="rki">
+              <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                <path d="M 4 11 Q 10 7 17 11 Q 24 15 30 11" stroke="#72706a" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                <path d="M 4 17 Q 10 13 17 17 Q 24 21 30 17" stroke="#72706a" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                <path d="M 4 23 Q 10 19 17 23 Q 24 27 30 23" stroke="#72706a" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
+            <div class="tname">Wave</div>
+          </div>
+
+          <div class="titem">
+            <div class="rki">
+              <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                <circle cx="17" cy="17" r="4"  stroke="#72706a" stroke-width="1.4" fill="none"/>
+                <circle cx="17" cy="17" r="8"  stroke="#72706a" stroke-width="1.4" fill="none"/>
+                <circle cx="17" cy="17" r="13" stroke="#72706a" stroke-width="1.4" fill="none"/>
+              </svg>
+            </div>
+            <div class="tname">Concentric</div>
+          </div>
+
+          <div class="titem">
+            <div class="rki">
+              <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                <path d="M 17 17 Q 19 10 24 8 Q 28 10 26 15 Q 24 19 19 20 Q 14 20 11 24 Q 9 28 13 30 Q 17 30 20 26 Q 22 22 20 19" stroke="#72706a" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
+            <div class="tname">Spiral</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="tsec">
+        <div class="tlabel">Line Weight</div>
+        <div class="wrow">
+          <div class="wbtn"><div class="wline" style="height:1px;"></div></div>
+          <div class="wbtn on"><div class="wline" style="height:2px;"></div></div>
+          <div class="wbtn"><div class="wline" style="height:4px;"></div></div>
+        </div>
+      </div>
+
+      <div class="tsec">
+        <div class="tlabel">Spacing</div>
+        <div class="slider-wrap">
+          <div class="slider-labels">
+            <span>Fine</span>
+            <span class="val">17 px</span>
+            <span>Wide</span>
+          </div>
+          <div class="slider-track">
+            <div class="slider-fill"></div>
+            <div class="slider-thumb"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tsec">
+        <div class="tlabel">Angle Lock</div>
+        <div class="angle-row">
+          <div class="mode-btn on" style="font-size:10px; padding:3px 8px;">Free</div>
+          <div class="mode-btn"    style="font-size:10px; padding:3px 8px;">45°</div>
+          <div class="mode-btn"    style="font-size:10px; padding:3px 8px;">90°</div>
+        </div>
+      </div>
+
+      <div class="tsec" style="margin-top:auto; border-bottom:none;">
+        <div class="tlabel">Strokes</div>
+        <div class="counter">
+          <span class="counter-n">23</span>
+          <span class="counter-l">rake strokes</span>
+        </div>
+      </div>
+
+    </aside>
+
+  </div><!-- /.middle -->
+
+  <!-- ══════════════════ BOTTOM BAR ══════════════════ -->
+  <footer class="bot-bar">
+    <div class="live-dot"></div>
+    <div class="bot-text"><strong>Connected</strong>&nbsp;· ws://api.karesansui.io/ws/zen-garden-42</div>
+    <div class="sep"></div>
+    <div class="rtt">RTT <span class="v">24 ms</span> <span class="budget">/ 100 ms budget</span></div>
+    <div class="bot-spacer"></div>
+    <div class="bact">
+      <div class="bbtn">Undo <span class="kbd">⌘Z</span></div>
+      <div class="bbtn">Redo <span class="kbd">⌘⇧Z</span></div>
+      <div class="bbtn danger">Clear Garden</div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

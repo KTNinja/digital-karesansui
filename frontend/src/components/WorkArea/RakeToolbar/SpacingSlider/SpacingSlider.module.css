@@ -1,0 +1,42 @@
+.root {
+  padding: 4px 0;
+}
+
+.labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 10px;
+  color: var(--ink-3);
+}
+
+.val {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.track {
+  position: relative;
+  height: 4px;
+  background: var(--bg-3);
+  border-radius: 2px;
+}
+
+.fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.input {
+  position: absolute;
+  inset: -8px 0;
+  width: 100%;
+  opacity: 0;
+  cursor: ew-resize;
+  margin: 0;
+}

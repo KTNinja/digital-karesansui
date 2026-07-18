@@ -1,0 +1,18 @@
+.root {
+  text-align: center;
+  padding: 4px;
+}
+
+.n {
+  display: block;
+  font-size: 22px;
+  font-weight: 200;
+  color: var(--ink-2);
+  margin-bottom: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  font-size: 10px;
+  color: var(--ink-3);
+}

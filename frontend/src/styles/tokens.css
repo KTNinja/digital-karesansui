@@ -1,0 +1,44 @@
+:root {
+  /* Surfaces */
+  --bg-0:     #0e0d0c;
+  --bg-1:     #181614;
+  --bg-2:     #222018;
+  --bg-3:     #2e2b24;
+  --border:   #3a3730;
+  --border-2: #4d4a42;
+
+  /* Sand */
+  --sand-h:   #d2c0a0;
+  --sand:     #c4ae8c;
+  --sand-s:   #b09878;
+  --sand-d:   #917c5e;
+
+  /* Stone */
+  --stone-h:  #a09488;
+  --stone:    #706460;
+  --stone-d:  #4a4240;
+
+  /* Ink */
+  --ink:      #f0ece4;
+  --ink-2:    #ada89e;
+  --ink-3:    #72706a;
+  --ink-4:    #4e4c48;
+
+  /* Accent */
+  --accent:   #c49460;
+  --accent-d: #9a7040;
+  --cool:     #6a8a94;
+
+  /* Status */
+  --live:     #68a868;
+  --warn:     #c49a4a;
+
+  /* Radii */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 12px;
+
+  /* Typography */
+  --font-sans: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN',
+               'Yu Gothic', system-ui, sans-serif;
+}

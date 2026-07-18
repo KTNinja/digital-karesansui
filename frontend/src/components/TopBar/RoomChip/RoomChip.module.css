@@ -1,0 +1,16 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 4px 11px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.id {
+  color: var(--ink);
+  font-weight: 500;
+}

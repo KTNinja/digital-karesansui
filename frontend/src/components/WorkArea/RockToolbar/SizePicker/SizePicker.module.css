@@ -1,0 +1,32 @@
+.root {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--ink-3);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  letter-spacing: 0.04em;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+
+.btn.on {
+  background: var(--bg-3);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.s { width: 27px; height: 27px; }
+.m { width: 32px; height: 32px; font-size: 11px; }
+.l { width: 37px; height: 37px; font-size: 12px; }
