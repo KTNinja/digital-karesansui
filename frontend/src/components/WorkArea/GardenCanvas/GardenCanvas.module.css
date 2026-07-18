@@ -28,3 +28,24 @@
   user-select: none;
   z-index: 3;
 }
+
+.modeBadge {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(60, 48, 30, 0.7);
+  background: rgba(210, 192, 160, 0.55);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(160, 130, 90, 0.35);
+  border-radius: 20px;
+  padding: 3px 14px;
+  pointer-events: none;
+  user-select: none;
+  z-index: 3;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}

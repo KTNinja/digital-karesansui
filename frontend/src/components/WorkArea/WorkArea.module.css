@@ -4,3 +4,17 @@
   flex: 1;
   background: var(--bg-0);
 }
+
+.toolbarSlot {
+  transition: opacity 0.2s;
+  display: flex;
+}
+
+.active {
+  opacity: 1;
+}
+
+.dim {
+  opacity: 0.38;
+  pointer-events: none;
+}

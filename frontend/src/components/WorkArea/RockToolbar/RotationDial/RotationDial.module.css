@@ -6,7 +6,20 @@
 }
 
 .svg {
-  cursor: crosshair;
+  cursor: grab;
+  touch-action: none;
+}
+
+.svg:active {
+  cursor: grabbing;
+}
+
+.handle {
+  cursor: grab;
+}
+
+.handle:active {
+  cursor: grabbing;
 }
 
 .val {
