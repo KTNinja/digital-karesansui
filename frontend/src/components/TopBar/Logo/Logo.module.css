@@ -1,0 +1,30 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.stone {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  background: radial-gradient(ellipse at 38% 32%, var(--stone-h), var(--stone-d));
+  border-radius: 48% 40% 52% 44% / 50% 48% 52% 50%;
+  box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.jp {
+  color: var(--accent);
+  font-size: 16px;
+  letter-spacing: 0.04em;
+}
+
+.sub {
+  color: var(--ink-3);
+  font-weight: 400;
+  font-size: 11px;
+}

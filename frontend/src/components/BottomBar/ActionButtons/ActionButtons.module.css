@@ -1,0 +1,38 @@
+.root {
+  display: flex;
+  gap: 5px;
+}
+
+.btn {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--font-sans);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.btn:hover {
+  border-color: var(--border-2);
+  color: var(--ink-2);
+}
+
+.danger:hover {
+  border-color: #8a4444;
+  color: #c47070;
+}
+
+.kbd {
+  display: inline-block;
+  font-size: 9px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 4px;
+  color: var(--ink-4);
+  vertical-align: middle;
+  margin-left: 3px;
+}
