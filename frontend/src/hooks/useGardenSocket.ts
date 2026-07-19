@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { useGarden } from '@/context/useGarden'
+import { getUserId, deriveInitials, deriveColor } from '@/utils/userId'
 import type { Rock, RakeStroke, RemoteUser } from '@/types/garden'
 
 type IncomingMessage =
@@ -34,6 +35,12 @@ export function useGardenSocket() {
 
     ws.onopen = () => {
       dispatch({ type: 'SET_CONNECTED', payload: { connected: true, endpoint: url } })
+
+      const userId = getUserId()
+      send({
+        type: 'join',
+        data: { id: userId, initials: deriveInitials(userId), color: deriveColor(userId) },
+      })
 
       pingTimerRef.current = setInterval(() => {
         send({ type: 'ping', clientTimestamp: Date.now() })

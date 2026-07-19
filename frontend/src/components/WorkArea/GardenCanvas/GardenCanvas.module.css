@@ -12,9 +12,11 @@
   cursor: crosshair;
 }
 
-.sand   { z-index: 0; }
+.sand    { z-index: 0; }
 .strokes { z-index: 1; }
-.rocks  { z-index: 2; }
+.rocks   { z-index: 2; }
+/* Remote cursors sit above rocks but never intercept pointer events */
+.cursors { z-index: 3; pointer-events: none; }
 
 .label {
   position: absolute;
@@ -26,7 +28,7 @@
   color: rgba(80, 66, 46, 0.55);
   pointer-events: none;
   user-select: none;
-  z-index: 3;
+  z-index: 4;
 }
 
 .modeBadge {
@@ -45,7 +47,7 @@
   padding: 3px 14px;
   pointer-events: none;
   user-select: none;
-  z-index: 3;
+  z-index: 4;
   white-space: nowrap;
   transition: opacity 0.2s;
 }

@@ -111,7 +111,12 @@ class ConnectionManager:
             del self._rooms[room_id]
         logger.info("client disconnected | room=%s", room_id)
 
-    async def broadcast(self, payload: dict[str, Any], room_id: str) -> None:
+    async def broadcast(
+        self,
+        payload: dict[str, Any],
+        room_id: str,
+        exclude: WebSocket | None = None,
+    ) -> None:
         """Fan out *payload* as JSON to every connection in *room_id*.
 
         Delivery is best-effort: a stale or closed socket is silently removed
@@ -122,8 +127,11 @@ class ConnectionManager:
         Args:
             payload: Arbitrary JSON-serialisable mapping to broadcast.
             room_id: Target room.
+            exclude: Optional sender socket to skip — prevents the originating
+                client from receiving its own optimistic action echoed back,
+                avoiding a redundant canvas re-render.
         """
-        connections = list(self._rooms.get(room_id, set()))
+        connections = [ws for ws in self._rooms.get(room_id, set()) if ws is not exclude]
         if not connections:
             return
 
