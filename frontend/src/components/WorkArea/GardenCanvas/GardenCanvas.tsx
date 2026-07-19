@@ -3,7 +3,8 @@ import s from './GardenCanvas.module.css'
 import { CanvasLayer } from './CanvasLayer/CanvasLayer'
 import { useGarden } from '@/context/useGarden'
 import { useGardenSocket } from '@/hooks/useGardenSocket'
-import type { Rock, RakeStroke } from '@/types/garden'
+import { getUserId, deriveInitials, deriveColor } from '@/utils/userId'
+import type { Rock, RakeStroke, RemoteUser } from '@/types/garden'
 
 function randomId() {
   return Math.random().toString(36).slice(2)
@@ -30,7 +31,6 @@ function makeRockGrad(ctx: CanvasRenderingContext2D, rx: number, ry: number, lig
 }
 
 function drawRiverStone(ctx: CanvasRenderingContext2D, scale: number) {
-  // Smooth, rounded, slightly asymmetric oval
   const rx = 28 * scale, ry = 20 * scale
   const g = makeRockGrad(ctx, rx, ry, '#b8b0a4', '#7a7068', '#4a4240')
   ctx.beginPath()
@@ -40,7 +40,6 @@ function drawRiverStone(ctx: CanvasRenderingContext2D, scale: number) {
 }
 
 function drawBoulder(ctx: CanvasRenderingContext2D, scale: number) {
-  // Chunky angular polygon — clearly different from river stone
   const s2 = scale
   ctx.beginPath()
   ctx.moveTo(-22 * s2,  4 * s2)
@@ -55,7 +54,6 @@ function drawBoulder(ctx: CanvasRenderingContext2D, scale: number) {
   const g = makeRockGrad(ctx, rx, rx, '#9a9288', '#65605a', '#3e3a36')
   ctx.fillStyle = g
   ctx.fill()
-  // Highlight facet line
   ctx.beginPath()
   ctx.moveTo(-14 * s2, -18 * s2)
   ctx.lineTo(  6 * s2, -22 * s2)
@@ -66,14 +64,12 @@ function drawBoulder(ctx: CanvasRenderingContext2D, scale: number) {
 }
 
 function drawFlatSlab(ctx: CanvasRenderingContext2D, scale: number) {
-  // Wide, very flat — like a paving stone
   const rx = 34 * scale, ry = 9 * scale
   const g = makeRockGrad(ctx, rx, ry, '#c0b8ac', '#8a8278', '#524e4a')
   ctx.beginPath()
   ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2)
   ctx.fillStyle = g
   ctx.fill()
-  // Top edge highlight
   ctx.beginPath()
   ctx.ellipse(0, -2 * scale, rx * 0.85, ry * 0.5, 0, Math.PI, Math.PI * 2)
   ctx.strokeStyle = 'rgba(255,255,255,0.12)'
@@ -82,7 +78,6 @@ function drawFlatSlab(ctx: CanvasRenderingContext2D, scale: number) {
 }
 
 function drawStandingStone(ctx: CanvasRenderingContext2D, scale: number) {
-  // Tall, narrow, upright monolith
   const w = 14 * scale, h = 28 * scale
   ctx.beginPath()
   ctx.moveTo(-w * 0.6,  h * 0.5)
@@ -96,7 +91,6 @@ function drawStandingStone(ctx: CanvasRenderingContext2D, scale: number) {
   const g = makeRockGrad(ctx, w, h, '#aca49a', '#706860', '#484240')
   ctx.fillStyle = g
   ctx.fill()
-  // Left-face shadow
   ctx.beginPath()
   ctx.moveTo(-w,        h * 0.1)
   ctx.lineTo(-w * 0.8, -h * 0.5)
@@ -136,7 +130,6 @@ function drawStrokes(ctx: CanvasRenderingContext2D, strokes: RakeStroke[]) {
     ctx.lineWidth = stroke.weight
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
-
     const [x0, y0] = stroke.points[0] ?? [0, 0]
     ctx.moveTo(x0, y0)
     for (let i = 1; i < stroke.points.length; i++) {
@@ -144,6 +137,29 @@ function drawStrokes(ctx: CanvasRenderingContext2D, strokes: RakeStroke[]) {
       ctx.lineTo(x, y)
     }
     ctx.stroke()
+  }
+}
+
+function drawCursors(ctx: CanvasRenderingContext2D, users: RemoteUser[]) {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+  for (const u of users) {
+    // Skip sentinel position (emitted on join before first real move)
+    if (u.cursorX < 0 || u.cursorY < 0) continue
+    ctx.save()
+    // Filled circle
+    ctx.beginPath()
+    ctx.arc(u.cursorX, u.cursorY, 14, 0, Math.PI * 2)
+    ctx.fillStyle = u.color
+    ctx.globalAlpha = 0.85
+    ctx.fill()
+    ctx.globalAlpha = 1
+    // Initials
+    ctx.font = 'bold 9px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillStyle = '#0e0d0c'
+    ctx.fillText(u.initials.slice(0, 2), u.cursorX, u.cursorY)
+    ctx.restore()
   }
 }
 
@@ -159,19 +175,22 @@ const MODE_LABEL: Record<string, string> = {
   'erase':      '消 Erase',
 }
 
+const CURSOR_THROTTLE_MS = 50
+
 export function GardenCanvas() {
   const { state, dispatch } = useGarden()
   const { send } = useGardenSocket()
 
-  const sandRef   = useRef<HTMLCanvasElement>(null)
-  const strokeRef = useRef<HTMLCanvasElement>(null)
-  const rockRef   = useRef<HTMLCanvasElement>(null)
-  const wrapRef   = useRef<HTMLDivElement>(null)
+  const sandRef    = useRef<HTMLCanvasElement>(null)
+  const strokeRef  = useRef<HTMLCanvasElement>(null)
+  const rockRef    = useRef<HTMLCanvasElement>(null)
+  const cursorRef  = useRef<HTMLCanvasElement>(null)
+  const wrapRef    = useRef<HTMLDivElement>(null)
 
-  // Track the active stroke id while the pointer is held down in rake mode
-  const activeStrokeId = useRef<string | null>(null)
+  const activeStrokeId    = useRef<string | null>(null)
+  const lastCursorSend    = useRef<number>(0)
 
-  // Resize all three canvases together
+  // Resize all four canvases together
   useEffect(() => {
     const wrap = wrapRef.current
     if (!wrap) return
@@ -179,7 +198,7 @@ export function GardenCanvas() {
       const entry = entries[0]
       if (!entry) return
       const { width, height } = entry.contentRect
-      for (const ref of [sandRef, strokeRef, rockRef]) {
+      for (const ref of [sandRef, strokeRef, rockRef, cursorRef]) {
         if (ref.current) {
           ref.current.width  = width
           ref.current.height = height
@@ -192,17 +211,20 @@ export function GardenCanvas() {
     return () => ro.disconnect()
   }, [])
 
-  // Redraw rocks layer when rocks change
   useEffect(() => {
     const ctx = rockRef.current?.getContext('2d')
     if (ctx) drawRocks(ctx, state.rocks)
   }, [state.rocks])
 
-  // Redraw strokes layer when strokes change
   useEffect(() => {
     const ctx = strokeRef.current?.getContext('2d')
     if (ctx) drawStrokes(ctx, state.strokes)
   }, [state.strokes])
+
+  useEffect(() => {
+    const ctx = cursorRef.current?.getContext('2d')
+    if (ctx) drawCursors(ctx, state.remoteUsers)
+  }, [state.remoteUsers])
 
   const getCanvasXY = (e: React.PointerEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -211,6 +233,7 @@ export function GardenCanvas() {
 
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     const [x, y] = getCanvasXY(e)
+    const userId = getUserId()
 
     if (state.mode === 'place-rock') {
       const rock: Rock = {
@@ -220,7 +243,7 @@ export function GardenCanvas() {
         rotation: state.rockRotation,
         x, y,
         timestamp: Date.now(),
-        ownerId: 'local',
+        ownerId: userId,
       }
       dispatch({ type: 'PLACE_ROCK', payload: rock })
       send({ type: 'rock_placed', data: rock })
@@ -237,14 +260,13 @@ export function GardenCanvas() {
         angleLock: state.angleLock,
         points: [[x, y]],
         timestamp: Date.now(),
-        ownerId: 'local',
+        ownerId: userId,
       }
       dispatch({ type: 'ADD_STROKE', payload: stroke })
       e.currentTarget.setPointerCapture(e.pointerId)
     }
 
     if (state.mode === 'erase') {
-      // Find topmost rock near click (within 35px) and remove it
       const hit = [...state.rocks].reverse().find(r => {
         const dx = r.x - x, dy = r.y - y
         return Math.sqrt(dx * dx + dy * dy) < 35
@@ -257,17 +279,33 @@ export function GardenCanvas() {
   }, [state, dispatch, send])
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (state.mode !== 'rake' || !activeStrokeId.current) return
     const [x, y] = getCanvasXY(e)
-    const id = activeStrokeId.current
+    const now = Date.now()
+    const userId = getUserId()
 
-    // Append point to the active stroke in-place by dispatching REMOTE_ADD_STROKE
-    // which replaces the stroke entry via the LWW merge path
+    // Throttled cursor broadcast — runs for all modes
+    if (now - lastCursorSend.current >= CURSOR_THROTTLE_MS) {
+      lastCursorSend.current = now
+      send({
+        type: 'cursor_moved',
+        data: {
+          id: userId,
+          initials: deriveInitials(userId),
+          color: deriveColor(userId),
+          cursorX: x,
+          cursorY: y,
+        },
+      })
+    }
+
+    // Rake stroke point accumulation
+    if (state.mode !== 'rake' || !activeStrokeId.current) return
+    const id = activeStrokeId.current
     const existing = state.strokes.find(s => s.id === id)
     if (!existing) return
     const updated: RakeStroke = { ...existing, points: [...existing.points, [x, y]] }
     dispatch({ type: 'REMOTE_ADD_STROKE', payload: updated })
-  }, [state.mode, state.strokes, dispatch])
+  }, [state.mode, state.strokes, dispatch, send])
 
   const handlePointerUp = useCallback(() => {
     if (activeStrokeId.current) {
@@ -291,6 +329,7 @@ export function GardenCanvas() {
       <CanvasLayer ref={sandRef}   className={s.sand} />
       <CanvasLayer ref={strokeRef} className={s.strokes} />
       <CanvasLayer ref={rockRef}   className={s.rocks} />
+      <CanvasLayer ref={cursorRef} className={s.cursors} />
       <div className={s.modeBadge}>{MODE_LABEL[state.mode]}</div>
       <span className={s.label}>GardenCanvas</span>
     </div>
